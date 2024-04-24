@@ -7,11 +7,12 @@ print("已啟動。用SIGINT (CTRL+C) 中止程式")
 try:
     for msg in consumer:
         msg: ConsumerRecord = msg  # for type hint
-        print(
-                "timestamp:", datetime.datetime.fromtimestamp(msg.timestamp / 1000),
-                "value:", msg.value,
-                "offset:", msg.offset,
-                "partition:", msg.partition
-                )
+        print({
+            "partition": msg.partition,
+            "offset": msg.offset,
+            "value": msg.value.decode()
+            })
+        prefix = f"{msg.topic}[{msg.partition} | {msg.offset}] / {datetime.datetime.fromtimestamp(msg.timestamp / 1000)}"
+        print(f"- {prefix} {msg.value.decode()}")
 except KeyboardInterrupt:
     consumer.close()
